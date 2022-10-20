@@ -57,9 +57,22 @@ app.post('/login',(req,res)=>{
     });
 });
 
+app.post('/test',verifyToken,(req,res)=>{
+    console.log(req.data[0].email)
+    res.send('info secreta')
+})
 
 function verifyToken(req,res,next){
-    
+    if(!req.headers.authorization) return res.status(401).json('no autorizado');
+
+    const token = req.headers.authorization.substr(7);
+    if(token!==''){
+        const content = jwt.verify(token,'sedan');
+        req.data = content;
+        next();
+    }else{
+        res.status(401).json('token vacio o no valido')
+    }
 }
 
 
